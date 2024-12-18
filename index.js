@@ -1,46 +1,22 @@
-const express = require('express');
-const { Client, LocalAuth } = require('whatsapp-web.js');
+const venom = require('venom-bot');
 
-const app = express();
-const port = process.env.PORT || 3000;
+venom.create({
+  session: 'bot-session', // Nome da sessão do Venom
+  multidevice: true, // Habilitar o modo multi-dispositivo
+})
+  .then((client) => start(client))
+  .catch((erro) => console.log('Erro ao iniciar o bot:', erro));
 
-// Serve static files
-app.use(express.static('public'));
+function start(client) {
+  client.onMessage((message) => {
+    const { from, body } = message;
 
-// Endpoint para conectar ao WhatsApp e gerar o QR Code
-app.get('/qr-code', (req, res) => {
-  const client = new Client({
-    authStrategy: new LocalAuth()  // Auth using local storage for the session
+    // Responder com uma mensagem padrão
+    client.sendText(from, `Você disse: ${body}`);
   });
 
-  client.on('qr', (qr) => {
-    res.send(qr);  // Send the QR code to the frontend
+  client.onStateChange((state) => {
+    console.log('Estado atual:', state);
+    if (state === 'CONFLICT') client.useHere();
   });
-
-  client.on('ready', () => {
-    console.log('Bot is ready');
-  });
-
-  client.initialize();
-});
-
-// Endpoint para enviar mensagem
-app.post('/api/send-message', express.json(), async (req, res) => {
-  const { to, message } = req.body;
-
-  try {
-    const client = new Client({
-      authStrategy: new LocalAuth()  // Ensure you use the same client instance
-    });
-
-    await client.initialize();
-    await client.sendMessage(to, message);
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+}
