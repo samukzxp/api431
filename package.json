@@ -9,6 +9,6 @@
   "dependencies": {
     "express": "^4.17.1",
     "whatsapp-web.js": "^1.18.0",
-    "puppeteer": "^22.8.2"
+    "puppeteer": "23.10.3"
   }
 }
