@@ -1,0 +1,14 @@
+{
+  "name": "bot-venom",
+  "version": "1.0.0",
+  "description": "Venom Bot hosted on Render",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "whatsapp-web.js": "^1.18.0",
+    "puppeteer": "^20.16.0"
+  }
+}
